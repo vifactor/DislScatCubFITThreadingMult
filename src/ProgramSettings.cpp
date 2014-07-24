@@ -1,7 +1,7 @@
 /*
  * ProgramSettings.cpp
  *
- *  Created on: 11 june 2013
+ *  Created on: 24 july 2014
  *      Author: kopp
  */
 
@@ -108,42 +108,6 @@ ProgramSettings::SampleConfig::set(const libconfig::Setting& sample,
 	width = sample["width"];
 	/*dislocation settings*/
 	const libconfig::Setting &dislocations = sample["dislocations"];
-	if(dislocations.exists("misfit"))
-	{
-	    /*find how many misfit dislocation types are present*/
-	    int nb_mf_types = dislocations["misfit"].getLength();
-	    misfit.resize(nb_mf_types);
-	    for(int i = 0; i < nb_mf_types; ++i)
-	    {
-	        const libconfig::Setting & interface = 
-	                    dislocations["misfit"][i];
-
-            misfit[i].rho = interface["rho"];
-            cmap[interface["rho"].getPath()] = misfit[i].rho;
-		    /*burgers vector*/
-	        if(interface["b"].isArray() && interface["b"].getLength()
-	                                             == MillerCubIndicesDimension)
-	        {
-		        misfit[i].b.X = interface["b"][0];
-		        misfit[i].b.Y = interface["b"][1];
-		        misfit[i].b.Z = interface["b"][2];
-		    }
-		    else
-		        throw ProgramSettings::Exception(
-		                            interface["b"].getPath());
-		    /*dislocation line*/
-	        if(interface["l"].isArray() && interface["l"].getLength() 
-	                                            == MillerCubIndicesDimension)
-            {
-		        misfit[i].l.X = interface["l"][0];
-		        misfit[i].l.Y = interface["l"][1];
-		        misfit[i].l.Z = interface["l"][2];
-	        }
-	        else
-		        throw ProgramSettings::Exception(
-		                            interface["l"].getPath());
-	   }
-	}
 
 	if(dislocations.exists("threading"))
 	{
@@ -183,15 +147,6 @@ operator<<(std::ostream& out, const ProgramSettings::SampleConfig &sample)
             << sample.thickness << "\t"
 			<< sample.width << std::endl;
 	out << "\tPoisson ratio:\t" << sample.nu << std::endl;
-
-    out << "\tMisfit dislocations:" << std::endl;
-    for(size_t i = 0; i < sample.misfit.size(); ++i)
-    {
-        out << "\t\t[" << i << "]---" << std::endl;
-        out << "\t\tBurgers vector:\t" << sample.misfit[i].b << std::endl;
-        out << "\t\tDislocation line:\t" << sample.misfit[i].l << std::endl;
-        out << "\t\tDensity :\t" << sample.misfit[i].rho << std::endl;
-    }
 
 	out << "\tThreading dislocations:" << std::endl;
 	for(size_t i = 0; i < sample.threading.size(); ++i)

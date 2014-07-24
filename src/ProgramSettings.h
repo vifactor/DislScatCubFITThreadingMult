@@ -72,12 +72,6 @@ public:
 		/*cubic lattice parameters*/
 		double a0;
 
-		struct MisfitDislocationType
-		{
-			/*burgers components*/
-			MillerDirectCubIndices b, l;
-			double rho;
-		};
 		struct ThreadingDislocationType
 		{
 			MillerDirectCubIndices b;
@@ -87,7 +81,6 @@ public:
 			double rc;
 		};
 
-        std::vector<MisfitDislocationType> misfit;
 		std::vector<ThreadingDislocationType> threading;
         friend std::ostream& operator<< (std::ostream &out,
                                         const SampleConfig &data);
