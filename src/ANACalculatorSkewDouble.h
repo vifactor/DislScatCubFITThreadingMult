@@ -1,12 +1,12 @@
 /*
- * ANACalculatorCoplanarTriple.h
+ * ANACalculatorSkewDouble.h
  *
- *  Created on: 21 june 2013
+ *  Created on: 24 july 2014
  *      Author: kopp
  */
 
-#ifndef ANACALCULATORCOPLANARTRIPLE_H_
-#define ANACALCULATORCOPLANARTRIPLE_H_
+#ifndef ANACALCULATORSKEWDOUBLE_H_
+#define ANACALCULATORSKEWDOUBLE_H_
 
 #include "ANASampleCub.h"
 #include <gsl/gsl_integration.h>
@@ -54,4 +54,4 @@ protected:
 	gsl_interp_accel * m_accel;
 };
 
-#endif /* ANACALCULATORCOPLANARTRIPLE_H_ */
+#endif /* ANACALCULATORSKEWDOUBLE_H_ */

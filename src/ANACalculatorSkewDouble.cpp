@@ -1,11 +1,11 @@
 /*
- * ANACalculatorCoplanarTriple.cpp
+ * ANACalculatorSkewDouble.cpp
  *
- *  Created on: 31 june 2013
+ *  Created on: 24 july 2014
  *      Author: kopp
  */
 
-#include "ANACalculatorCoplanarTriple.h"
+#include "ANACalculatorSkewDouble.h"
 
 double ana_coplanar_triple_integrand_xz1(double x, void *params)
 {

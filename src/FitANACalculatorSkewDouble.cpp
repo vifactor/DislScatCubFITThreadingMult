@@ -1,11 +1,11 @@
 /*
- * FitANACalculatorCoplanarTriple.cpp
+ * FitANACalculatorSkewDouble.cpp
  *
  *  Created on: 25 july 2013
  *      Author: kopp
  */
 
-#include "FitANACalculatorCoplanarTriple.h"
+#include "FitANACalculatorSkewDouble.h"
 using namespace boost;
 
 FitANACalculatorCoplanarTriple::FitANACalculatorCoplanarTriple(

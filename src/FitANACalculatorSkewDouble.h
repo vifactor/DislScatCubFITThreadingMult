@@ -1,14 +1,14 @@
 /*
- * FitANACalculatorCoplanarTriple.h
+ * FitANACalculatorSkewDouble.h
  *
- *  Created on: 25 july 2013
+ *  Created on: 24 july 2014
  *      Author: kopp
  */
 
-#ifndef FITANACALCULATORCOPLANARTRIPLE_H_
-#define FITANACALCULATORCOPLANARTRIPLE_H_
+#ifndef FITANACALCULATORSKEWDOUBLE_H_
+#define FITANACALCULATORSKEWDOUBLE_H_
 
-#include "ANACalculatorCoplanarTriple.h"
+#include "ANACalculatorSkewDouble.h"
 #include "NonlinearFit.h"
 #include <boost/lexical_cast.hpp>
 
@@ -46,4 +46,4 @@ protected:
 	void initParameterNames(size_t nblayers);
 };
 
-#endif /* FITANACALCULATORCOPLANARTRIPLE_H_ */
+#endif /* FITANACALCULATORSKEWDOUBLE_H_ */

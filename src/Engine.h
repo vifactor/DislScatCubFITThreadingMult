@@ -8,7 +8,7 @@
 #ifndef Engine_H_
 #define Engine_H_
 
-#include "FitANACalculatorCoplanarTriple.h"
+#include "FitANACalculatorSkewDouble.h"
 #include "PortFitter.h"
 #include "ProgramSettings.h"
 #include "DataReader.h"
