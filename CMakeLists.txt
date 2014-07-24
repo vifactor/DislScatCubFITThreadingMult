@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(DislScatCubFITMisfitThreading)
+project(DislScatCubFITThreadingMult)
 
 #Check if important libraries are available.
 
@@ -18,14 +18,6 @@ find_package(Boost COMPONENTS filesystem system REQUIRED)
 
 #some libraries are build as external projects
 include(ExternalProject)
-
-#misfit interfaces library
-ExternalProject_Add(
-    minterface_project
-    PREFIX ${CMAKE_BINARY_DIR}
-    GIT_REPOSITORY https://github.com/vifactor/AnalyticalMisfitInterface.git
-    GIT_TAG origin
-)
 
 #Miller indices library
 ExternalProject_Add(
@@ -58,27 +50,23 @@ ExternalProject_Add(
 #compile project itself
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src/port_project-build)
-include_directories(${CMAKE_BINARY_DIR}/src/minterface_project-build)
 include_directories(${CMAKE_BINARY_DIR}/src/miller_project-build)
 include_directories(${CMAKE_BINARY_DIR}/src/config_project-build/include)
 
 link_directories(${CMAKE_BINARY_DIR}/src/miller_project-build)
-link_directories(${CMAKE_BINARY_DIR}/src/minterface_project-build)
 link_directories(${CMAKE_BINARY_DIR}/src/port_project-build)
 link_directories(${CMAKE_BINARY_DIR}/src/config_project-build/lib)
 
 file(GLOB CPP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-set(EXEC_NAME DislScatCubFITMisfitThreading)
+set(EXEC_NAME DislScatCubFITThreadingMult)
 add_executable(${EXEC_NAME} ${CPP_SOURCES})
 
 add_dependencies(${EXEC_NAME} miller_project)
-add_dependencies(${EXEC_NAME} minterface_project)
 add_dependencies(${EXEC_NAME} port_project)
 add_dependencies(${EXEC_NAME} config_project)
 
 target_link_libraries(${EXEC_NAME} 
                     port
-                    interface
                     miller
                     ${Boost_LIBRARIES}
                     config++
