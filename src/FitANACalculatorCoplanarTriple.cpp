@@ -17,12 +17,10 @@ FitANACalculatorCoplanarTriple::FitANACalculatorCoplanarTriple(
     
     /*all samples contain the same number of layers and interfaces*/
     size_t nblayers = m_calculators[0]->getSample()->getNbThreadingLayers();
-    size_t nbinterfaces = m_calculators[0]->getSample()->getNbMisfitInterfaces();
-    initParameterNames(nblayers, nbinterfaces);
+    initParameterNames(nblayers);
 }
 
-void FitANACalculatorCoplanarTriple::initParameterNames(size_t nblayers,
-                                                        size_t nbinterfaces)
+void FitANACalculatorCoplanarTriple::initParameterNames(size_t nblayers)
 {
     /*Data fit parameter names*/
     m_scale_names.resize(m_calculators.size());
@@ -31,14 +29,6 @@ void FitANACalculatorCoplanarTriple::initParameterNames(size_t nblayers,
     {
         m_scale_names.at(id) = "Data.[" + lexical_cast<std::string>(id) + "].I0";
         m_background_names.at(id) = "Data.[" + lexical_cast<std::string>(id) + "].Ibg";
-    }
-    /*misfit interfaces names*/
-    m_mf_density_names.resize(nbinterfaces);
-    for(size_t id = 0; id < nbinterfaces; ++id)
-    {
-        m_mf_density_names.at(id) = "Sample.dislocations.misfit.[" 
-                            + lexical_cast<std::string>(id) 
-                            + "].rho";
     }
     /*theading layers names*/
     m_th_density_names.resize(nblayers);
@@ -65,18 +55,7 @@ void FitANACalculatorCoplanarTriple::reinit(const NonlinearFit::CalculatorParame
         /*reinitialization scale and background coefficients*/
         m_scales[cid] = params.find(m_scale_names[cid])->second;
         m_backgrounds[cid] = params.find(m_background_names[cid])->second;
-        /*
-         * reinitialization of densities of misfit dislocations.
-         * initially misfit dislocation density is given in [cm-1]
-         * coefficient 1e-7 transforms it to [nm-1]
-        */
-        for(size_t iid = 0;
-                iid < m_calculators[cid]->getSample()->getNbMisfitInterfaces();
-                ++iid)
-        {
-            rho_mf = params.find(m_mf_density_names[iid])->second  * 1e-7;
-            m_calculators[cid]->getSample()->resetMisfitInterface(iid, rho_mf);
-        }
+
 
         /*
          * reinitialization of densities and correlation radii of threading dislocations.

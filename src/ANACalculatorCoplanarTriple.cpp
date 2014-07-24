@@ -151,11 +151,9 @@ void ANACalculatorCoplanarTriple::prepare(double z1) const
 {
 	static double wxx, wxz, wzz;
 
-	m_sample->wij(z1, wxx, wxz, wzz);
-
 	/*take into account resolution*/
-	wxx += m_resol2_x;
-	wzz += m_resol2_z;
+	wxx = m_resol2_x;
+	wzz = m_resol2_z;
 
 	m_scale = sqrt(M_PI / wzz) * exp(-m_qz * m_qz / (4 * wzz));
 	m_coefficient = wxx - wxz * wxz / (4 * wzz);

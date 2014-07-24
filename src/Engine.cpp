@@ -10,27 +10,6 @@ using namespace NonlinearFit;
 using namespace Geometry;
 using namespace boost;
 
-/*----------- Handy functions --------------*/
-Vector3d toMisfitFrame(const Vector3d& burgers,
-                     const Vector3d& line,
-                     const Vector3d& normal)
-{
-    Vector3d misf_dir;
-    Vector3d line_dir;
-    Vector3d norm_dir;
-    
-    line_dir = normalize(line);
-    norm_dir = normalize(normal);
-    misf_dir = cross(norm_dir, line_dir);
-    
-    /*misfit, screw and bz-edge components of the dislocation*/
-    double bx = inner_prod(burgers, misf_dir);
-    double by = inner_prod(burgers, line_dir);
-    double bz = inner_prod(burgers, norm_dir);
-    
-    return Vector3d(bx, by, bz);
-}
-
 Vector3d toThreadingFrame(const Vector3d& burgers,
                      const Vector3d& normal)
 {
@@ -59,43 +38,6 @@ Vector3d toCoplanarFrame(const Vector3d& Q, const Vector3d& normal)
     return Vector3d(Qx, Qy, Qz);
 }
 
-double toMisfitInPlaneAngle(const Vector3d& Q, const Vector3d& burgers,
-                const Vector3d& line, const Vector3d& normal)
-{
-    /* gives angle between in-plane component of reflection vector
-     * and misfit component of Burgers vector
-     */
-    Vector3d misf_dir;
-    Vector3d line_dir;
-    Vector3d norm_dir;
-    Vector3d Qpar_dir;
-    Vector3d Qpar;
-    double Qz;
-    
-    line_dir = normalize(line);
-    norm_dir = normalize(normal);
-    misf_dir = cross(norm_dir, line_dir);
-    
-    Qz = inner_prod(Q, norm_dir);
-    Qpar = Q - Qz * norm_dir;
-    if(norm_2(Qpar) < 1e-10)
-    {
-        return 0;
-    }
-    else
-    {   
-        Qpar_dir = normalize(Qpar);
-        double cosphi = inner_prod(Qpar_dir, misf_dir);
-        /*
-         * for some parameters
-         * domain error occurs : arg is outside the range [-1.0; 1.0]
-         * next condition assures that cos is inside the range [-1.0; 1.0]
-         */
-        if(fabs(cosphi) > 1.0)
-            cosphi = GSL_SIGN(cosphi);
-        return acos(cosphi);
-    }
-}
 /*----------- end handy functions -----------*/
 Engine::Engine()
 {
@@ -392,25 +334,6 @@ void Engine::setupCalculator(size_t id)
 				m_programSettings->getDataConfig(id).resolX,
 				m_programSettings->getDataConfig(id).resolZ);
 
-		/*misfit interfaces*/
-		const std::vector<ProgramSettings::SampleConfig::MisfitDislocationType>& 
-		    mf_dislocations = m_programSettings->getSampleConfig().misfit;
-		for(size_t i = 0; i < mf_dislocations.size(); ++i)
-		{
-		    l_vec = transformator.toVector3d(mf_dislocations[i].l);
-	        b_vec = transformator.toVector3d(mf_dislocations[i].b);
-	        
-	        b = toMisfitFrame(b_vec, l_vec, n_vec);
-	        phi = toMisfitInPlaneAngle(Q_vec, b_vec, l_vec, n_vec);
-	        
-            m_calculators.back()->getSample()->addMisfitInterface(
-                mf_dislocations[i].rho * 1e-7,
-                b(0), b(1), b(2),
-                Q(0), Q(1), Q(2),
-                phi,
-                m_programSettings->getSampleConfig().nu,
-                m_programSettings->getSampleConfig().thickness);
-		}
 		/*threading layers*/
         const std::vector<ProgramSettings::SampleConfig::ThreadingDislocationType>& 
             th_dislocations = m_programSettings->getSampleConfig().threading;
