@@ -17,7 +17,10 @@
 class ANACalculatorSkewDouble
 {
 public:
-	ANACalculatorSkewDouble(double Qx, double Qz, double lambda, double epsabs = 1e-5);
+	ANACalculatorSkewDouble(double Qx, double Qz, 
+	        double lambda = 0.154, // Cu K-alpha wavelength in nm
+	        double epsabs = 1e-5 // absolute error for integration
+	        );
 	virtual ~ANACalculatorSkewDouble();
 
 	virtual void setResolution(double fwhm_qx, double fwhm_qz);
