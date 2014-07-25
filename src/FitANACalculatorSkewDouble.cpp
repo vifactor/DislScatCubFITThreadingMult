@@ -8,7 +8,7 @@
 #include "FitANACalculatorSkewDouble.h"
 using namespace boost;
 
-FitANACalculatorCoplanarTriple::FitANACalculatorCoplanarTriple(
+FitANACalculatorSkewDouble::FitANACalculatorSkewDouble(
                     const std::vector<ANACalculatorSkewDouble *>& calculators)
 {
 	m_calculators = calculators;
@@ -20,7 +20,7 @@ FitANACalculatorCoplanarTriple::FitANACalculatorCoplanarTriple(
     initParameterNames(nblayers);
 }
 
-void FitANACalculatorCoplanarTriple::initParameterNames(size_t nblayers)
+void FitANACalculatorSkewDouble::initParameterNames(size_t nblayers)
 {
     /*Data fit parameter names*/
     m_scale_names.resize(m_calculators.size());
@@ -44,7 +44,7 @@ void FitANACalculatorCoplanarTriple::initParameterNames(size_t nblayers)
     }
 }
 
-void FitANACalculatorCoplanarTriple::reinit(const NonlinearFit::CalculatorParameterMap& params)
+void FitANACalculatorSkewDouble::reinit(const NonlinearFit::CalculatorParameterMap& params)
 {
     static double rho_mf;
 	static double rho_th, rc_th;
@@ -81,7 +81,7 @@ void FitANACalculatorCoplanarTriple::reinit(const NonlinearFit::CalculatorParame
 	}
 }
 
-double FitANACalculatorCoplanarTriple::eval(const NonlinearFit::CalculatorArgument * arg)
+double FitANACalculatorSkewDouble::eval(const NonlinearFit::CalculatorArgument * arg)
 {
 	static double qx, qz, result;
 	static int id;

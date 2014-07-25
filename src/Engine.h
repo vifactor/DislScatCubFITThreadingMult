@@ -52,7 +52,7 @@ private:
 	void printFitterInfo(NonlinearFit::NonlinearFitter * fitter);
 
 	std::vector<ANACalculatorSkewDouble *>  m_calculators;
-	FitANACalculatorCoplanarTriple *  m_fit_calculator;
+	FitANACalculatorSkewDouble *  m_fit_calculator;
 	NonlinearFit::NonlinearFitter * m_fitter;
 	ProgramSettings * m_programSettings;
 

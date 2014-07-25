@@ -26,13 +26,13 @@ public:
 	int m_id;
 };
 
-class FitANACalculatorCoplanarTriple:
+class FitANACalculatorSkewDouble:
 		public NonlinearFit::FitCalculator
 {
 public:
-	FitANACalculatorCoplanarTriple(
+	FitANACalculatorSkewDouble(
 	        const std::vector<ANACalculatorSkewDouble *>& calculators);
-	virtual ~FitANACalculatorCoplanarTriple() {}
+	virtual ~FitANACalculatorSkewDouble() {}
 	virtual void reinit(const NonlinearFit::CalculatorParameterMap& params);
 	virtual double eval(const NonlinearFit::CalculatorArgument * arg);
 protected:

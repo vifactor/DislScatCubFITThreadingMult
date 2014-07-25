@@ -249,7 +249,7 @@ void Engine::setupComponents()
 {
     for(size_t id = 0; id < m_programSettings->getDataConfig().size(); ++id)
         setupCalculator(id);
-    m_fit_calculator = new FitANACalculatorCoplanarTriple(m_calculators);
+    m_fit_calculator = new FitANACalculatorSkewDouble(m_calculators);
     
     std::cout << "--- Data files ---" << std::endl;
     for(size_t id = 0; id < m_programSettings->getDataConfig().size(); ++id)
