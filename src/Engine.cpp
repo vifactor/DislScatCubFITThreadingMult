@@ -323,8 +323,10 @@ void Engine::setupCalculator(size_t id)
     
 	try
 	{
-	    m_calculators.push_back(new ANACalculatorSkewDouble(150
-				/*FIXME : make sampling a part of program settings
+	    m_calculators.push_back(new ANACalculatorSkewDouble(
+	            0.154,/*FIXME : make x-ray wavelength a part of program settings*/
+	            Q[0], Q[2],
+	            150/*FIXME : make sampling a part of program settings
 				 m_programSettings->getCalculatorSettings().sampling*/));
         m_calculators.back()->setSample(new ANASampleCub(
                 m_programSettings->getSampleConfig().thickness,

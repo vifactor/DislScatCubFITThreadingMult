@@ -7,38 +7,52 @@
 
 #include "ANACalculatorSkewDouble.h"
 
-double ana_coplanar_triple_integrand_xz1(double x, void *params)
+double ana_skew_double_integrand(double x, void *params)
 {
 	ANACalculatorSkewDouble * calculator;
 	static double result;
 
 	calculator = static_cast<ANACalculatorSkewDouble *> (params);
 
-	result = exp(-calculator->m_coefficient * x * x - calculator->T_threading(x))
+	result = exp(-calculator->T_threading(x))
 			* cos(calculator->m_frequency * x);
 
 	return result;
 }
 
-ANACalculatorSkewDouble::ANACalculatorSkewDouble(size_t sampling, double epsabs)
+ANACalculatorSkewDouble::ANACalculatorSkewDouble(double Qx, double Qz, 
+                                                double lambda, double epsabs)
 {
-
+    double Q;
+    double sinThetaB, cosThetaB,
+            sinPsi, cosPsi, 
+            sinPhi, cosPhi,
+            cosAlpha;
+    
 	m_sample = NULL;
-
-	m_qx = 0.0;
-	m_qz = 0.0;
 
 	m_resol2_x = 0.0;
 	m_resol2_z = 0.0;
 
-	m_scale = 0.0;
-	m_coefficient = 0.0;
 	m_frequency = 0.0;
+	
+	Q = sqrt(Qx * Qx + Qz * Qz);
+	/*skew geometry angles*/
+	sinThetaB = Q * lambda / (4 * M_PI);
+	cosThetaB = sqrt(1.0 - gsl_pow_2(sinThetaB));
+	sinPsi = Qz / Q;
+	sinPhi = sinPsi * sinThetaB;
+	cosPsi = sqrt(1.0 - gsl_pow_2(sinPsi));
+	cosPhi = sqrt(1.0 - gsl_pow_2(sinPhi));
+	cosAlpha = sinThetaB * cosPsi / cosPhi;
+	
+	m_angcoef = Q * cosThetaB / cosPhi;
+    m_alpha = acos(cosAlpha);
 
 	/*initialization of integration staff*/
 	m_limit = 10000;
 	m_epsabs = epsabs;
-	m_function.function = &ana_coplanar_triple_integrand_xz1;
+	m_function.function = &ana_skew_double_integrand;
 	m_function.params = this;
 
 	m_qawo_table = gsl_integration_qawo_table_alloc(0.0, 0.0, GSL_INTEG_COSINE,
@@ -46,28 +60,12 @@ ANACalculatorSkewDouble::ANACalculatorSkewDouble(size_t sampling, double epsabs)
 	m_workspace = gsl_integration_workspace_alloc(m_limit);
 	m_cyclic_workspace = gsl_integration_workspace_alloc(m_limit);
 
-	m_a = 0.0;
-
-	/*allocate and initialize z-arrays*/
-	m_sampling = sampling;
-	m_z1 = new double[m_sampling];
-	m_integrand_values = new double[m_sampling];
-
-	/*allocate interpolation staff*/
-	m_interp =  gsl_interp_alloc (gsl_interp_cspline, m_sampling);
-	m_accel = gsl_interp_accel_alloc ();
-
+    /*switch off exception like behavior on bad integral convergence*/
 	gsl_set_error_handler_off ();
 }
 
 ANACalculatorSkewDouble::~ANACalculatorSkewDouble()
 {
-	delete[] m_z1;
-	delete[] m_integrand_values;
-
-	gsl_interp_free (m_interp);
-	gsl_interp_accel_free(m_accel);
-
 	if(m_qawo_table)
 		gsl_integration_qawo_table_free(m_qawo_table);
 	if(m_workspace)
@@ -79,13 +77,6 @@ ANACalculatorSkewDouble::~ANACalculatorSkewDouble()
 void ANACalculatorSkewDouble::setSample(ANASampleCub * sample)
 {
     m_sample = sample;
-    for(size_t i = 0; i < m_sampling - 1; ++i)
-    {
-        m_z1[i] = i * m_sample->m_thickness / m_sampling;
-        m_integrand_values[i] = 0.0;
-    }
-    /*at z1 = d, the correlation function is undefined*/
-    m_z1[m_sampling - 1] = m_sample->m_thickness * 0.999;
 }
 
 void ANACalculatorSkewDouble::setResolution(double fwhm_qx, double fwhm_qz)
@@ -100,62 +91,33 @@ double ANACalculatorSkewDouble::T_threading(double x) const
 {
 	static double result;
 
-	result = m_sample->T_threading(fabs(x), 0.0);
+	result = m_sample->T_threading(fabs(x), m_alpha);
 
 	return result;
 }
 
 double
-ANACalculatorSkewDouble::I(const double qx, const double qz, double & err) const
+ANACalculatorSkewDouble::I(const double omega, double & error) const
 {
 	static double result, abserr;
 
-	m_qx = qx;
-	m_qz = qz;
+	m_frequency = m_angcoef * omega;
 
-	err = 0.0;
-	/*here integration over x is performed*/
-	for(size_t i = 0; i < m_sampling; ++i)
-	{
-		result = 0.0;
-		abserr = 0.0;
-		prepare(m_z1[i]);
-		//gsl_integration_qawo_table_set(m_qawo_table, m_frequency, 1, GSL_INTEG_COSINE);
-		//gsl_integration_qawf (&m_function, m_a, m_epsabs, m_limit, m_workspace, m_cyclic_workspace, m_qawo_table, &result, &abserr);
+	//gsl_integration_qawo_table_set(m_qawo_table, m_frequency, 1, GSL_INTEG_COSINE);
+	//gsl_integration_qawf (&m_function, m_a, m_epsabs, m_limit, m_workspace, m_cyclic_workspace, m_qawo_table, &result, &abserr);
 
-		gsl_integration_qagiu (&m_function, m_a, m_epsabs, 1.e-6, m_limit, m_workspace, &result, &abserr);
-		m_integrand_values[i] = 2 * result * m_scale;
-		err += 2 * abserr;
-
-		//std::cout << m_z1[i] << "\t" << m_integrand_values[i] << std::endl;
-	}
-
-	/*here integration over z1 is performed*/
-	//double gsl_interp_eval_integ (const gsl_interp * interp, const double xa[], const double ya[], double a, double b, gsl_interp_accel * acc)
-	gsl_interp_init (m_interp, m_z1, m_integrand_values, m_sampling);
-	result = gsl_interp_eval_integ (m_interp, m_z1, m_integrand_values, m_z1[0], m_z1[m_sampling-1], m_accel);
+	gsl_integration_qagiu (&m_function, 0.0, m_epsabs, 1.e-6, m_limit, m_workspace, &result, &abserr);
+	result *= 2;
+	error = 2 * abserr;
 
 	return result;
 }
 
-double ANACalculatorSkewDouble::I(const double qx, const double qz) const
+double ANACalculatorSkewDouble::I(const double omega) const
 {
 	static double result, abserr;
 
-	result = I(qx, qz, abserr);
+	result = I(omega, abserr);
 
 	return result;
-}
-
-void ANACalculatorSkewDouble::prepare(double z1) const
-{
-	static double wxx, wxz, wzz;
-
-	/*take into account resolution*/
-	wxx = m_resol2_x;
-	wzz = m_resol2_z;
-
-	m_scale = sqrt(M_PI / wzz) * exp(-m_qz * m_qz / (4 * wzz));
-	m_coefficient = wxx - wxz * wxz / (4 * wzz);
-	m_frequency = m_qx - m_qz * wxz / (2 * wzz);
 }

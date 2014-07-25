@@ -17,29 +17,25 @@
 class ANACalculatorSkewDouble
 {
 public:
-	ANACalculatorSkewDouble(size_t sampling = 100, double epsabs = 1e-5);
+	ANACalculatorSkewDouble(double Qx, double Qz, double lambda, double epsabs = 1e-5);
 	virtual ~ANACalculatorSkewDouble();
 
 	virtual void setResolution(double fwhm_qx, double fwhm_qz);
 	virtual void setSample(ANASampleCub * );
 	ANASampleCub * getSample() {return m_sample;}
-	virtual double I(const double qx, const double qz) const;
-	virtual double I(const double qx, const double qz, double & error) const;
+	virtual double I(const double omega) const;
+	virtual double I(const double omega, double & error) const;
 	
-	friend double ana_coplanar_triple_integrand_xz1(double x, void *params);
+	friend double ana_skew_double_integrand(double x, void *params);
 protected:
     ANASampleCub * m_sample;
 
-	mutable double m_qx, m_qz;
+    double m_alpha, m_angcoef;
 	double m_resol2_x, m_resol2_z;
+	mutable double m_frequency;
 
-	size_t m_sampling;
-	mutable double * m_z1, * m_integrand_values;
-
-	void prepare(double z1) const;
 	inline double T_threading(double x) const;
 
-	mutable double m_scale, m_coefficient, m_frequency;
 
 	/*gsl integration staff*/
 	gsl_integration_workspace * m_workspace;
@@ -47,11 +43,7 @@ protected:
 	gsl_integration_qawo_table * m_qawo_table;
 	mutable gsl_function m_function;
 	size_t m_limit;
-	double m_a, m_epsabs;
-
-	/*gsl interpolation (and integration) staff*/
-	gsl_interp * m_interp;
-	gsl_interp_accel * m_accel;
+	double m_epsabs;
 };
 
 #endif /* ANACALCULATORSKEWDOUBLE_H_ */
