@@ -152,7 +152,7 @@ void Engine::saveFitData(size_t id) const
 	fout << "#qx\tqz\tIexp\tIini\tIfin" << std::endl;
 	for(size_t ipt = m_vals_sizes[id]; ipt < m_vals_sizes[id + 1]; ipt++)
 	{
-        fout << m_domega_vals[ipt] * 180.0 / M_PI  << "\t"
+        fout << m_domega_vals[ipt]  << "\t"
 			<< m_exp_intens_vals[ipt] << "\t"
 			<< m_ini_intens_vals[ipt] << "\t"
 			<< m_fin_intens_vals[ipt] << std::endl;
@@ -271,25 +271,60 @@ void Engine::readData(size_t id)
     if(!dr.columnExists("[intensity]"))
         throw Engine::Exception("Column \"[intensity]\" has not been found in " +
                             m_programSettings->getDataConfig(id).file.native());
-    else if(!dr.columnExists("[qx]"))
-        throw Engine::Exception("Column \"[domega]\" has not been found in "+
-                            m_programSettings->getDataConfig(id).file.native());
     else
     {
         const DataReader::ColumnType& intensity = dr.columnGet("[intensity]");
-        const DataReader::ColumnType& domega= dr.columnGet("[domega]");
         
-        /*allocate arguments and residuals*/
-        for(size_t i = 0; i < intensity.size(); ++i)
+        if(dr.columnExists("[domega]"))
         {
-            m_exp_intens_vals.push_back(intensity[i]);
-            /*transform degrees to radians*/
-            m_domega_vals.push_back(domega[i] * M_PI / 180.0);
-        
-            m_DataPoints.push_back(
-                NonlinearFit::DataPoint(
-                        new ANACalculatorSkewDoubleArgument(domega[i] * M_PI / 180.0, id),
-                        intensity[i]));
+            const DataReader::ColumnType& domega= dr.columnGet("[domega]");
+            
+            /*allocate arguments and residuals*/
+            for(size_t i = 0; i < intensity.size(); ++i)
+            {
+                m_exp_intens_vals.push_back(intensity[i]);
+                /*transform degrees to radians*/
+                m_domega_vals.push_back(domega[i]);
+            
+                m_DataPoints.push_back(
+                    NonlinearFit::DataPoint(
+                            new ANACalculatorSkewDoubleArgument(domega[i] * M_PI / 180.0, id),
+                            intensity[i]));
+            }
+        }
+        else if(dr.columnExists("[omega]"))
+        {
+            const DataReader::ColumnType& omega= dr.columnGet("[omega]");            
+            DataReader::ColumnType::const_iterator it_of_max;
+            size_t index_of_max;
+            double omega_max;
+
+            //find maximum intensity == peak center
+            it_of_max = std::max_element(intensity.begin(), intensity.end());
+            index_of_max = it_of_max - intensity.begin();
+
+            omega_max = omega.at(index_of_max);
+            
+            /*allocate arguments and residuals*/
+            for(size_t i = 0; i < intensity.size(); ++i)
+            {
+                m_exp_intens_vals.push_back(intensity[i]);
+                /*transform degrees to radians*/
+                m_domega_vals.push_back(omega[i]);
+            
+                m_DataPoints.push_back(
+                    NonlinearFit::DataPoint(
+                            new ANACalculatorSkewDoubleArgument(
+                                    (omega[i] - omega_max) * M_PI / 180.0,
+                                    id),
+                                intensity[i])
+                                );
+            }
+        }
+        else //(!dr.columnExists("[domega]") and !dr.columnExists("[omega]"))
+        {
+            throw Engine::Exception("Neither \"[domega]\" nor \"[omega]\" has not been found in "+
+                                m_programSettings->getDataConfig(id).file.native());
         }
         
         m_vals_sizes.push_back(m_vals_sizes.back() + intensity.size());
