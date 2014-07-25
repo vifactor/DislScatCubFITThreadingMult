@@ -83,14 +83,13 @@ void FitANACalculatorSkewDouble::reinit(const NonlinearFit::CalculatorParameterM
 
 double FitANACalculatorSkewDouble::eval(const NonlinearFit::CalculatorArgument * arg)
 {
-	static double qx, qz, result;
+	static double omega, result;
 	static int id;
 
-	qx = static_cast<const ANACalculatorCoplanarTripleArgument* >(arg)->m_qx;
-	qz = static_cast<const ANACalculatorCoplanarTripleArgument* >(arg)->m_qz;
-	id = static_cast<const ANACalculatorCoplanarTripleArgument* >(arg)->m_id;
+	omega = static_cast<const ANACalculatorSkewDoubleArgument* >(arg)->m_omega;
+	id = static_cast<const ANACalculatorSkewDoubleArgument* >(arg)->m_id;
     
-	result = m_scales[id] * m_calculators[id]->I(qx, qz) + m_backgrounds[id];
+	result = m_scales[id] * m_calculators[id]->I(omega) + m_backgrounds[id];
 
 	return result;
 }

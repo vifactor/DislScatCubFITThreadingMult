@@ -293,7 +293,7 @@ void Engine::readData(size_t id)
         {
             m_DataPoints.push_back(
                 NonlinearFit::DataPoint(
-                        new ANACalculatorCoplanarTripleArgument(qx[i], qz[i], id),
+                        new ANACalculatorSkewDoubleArgument(qx[i], id),
                         intensity[i]));
         }
         

@@ -12,17 +12,17 @@
 #include "NonlinearFit.h"
 #include <boost/lexical_cast.hpp>
 
-class ANACalculatorCoplanarTripleArgument : public NonlinearFit::CalculatorArgument
+class ANACalculatorSkewDoubleArgument : public NonlinearFit::CalculatorArgument
 {
 public:
-	ANACalculatorCoplanarTripleArgument(double qx, double qz, int id)
+	ANACalculatorSkewDoubleArgument(double omega, int id)
 	{
-	    m_qx = qx; m_qz = qz;
+	    m_omega = omega;
 	    m_id = id;
 	}
-	virtual ~ANACalculatorCoplanarTripleArgument() {}
+	virtual ~ANACalculatorSkewDoubleArgument() {}
 	
-	double m_qx, m_qz;
+	double m_omega;
 	int m_id;
 };
 
