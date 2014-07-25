@@ -14,11 +14,11 @@
 #include <gsl/gsl_sf_trig.h>
 #include <gsl/gsl_errno.h>
 
-class ANACalculatorCoplanarTriple
+class ANACalculatorSkewDouble
 {
 public:
-	ANACalculatorCoplanarTriple(size_t sampling = 100, double epsabs = 1e-5);
-	virtual ~ANACalculatorCoplanarTriple();
+	ANACalculatorSkewDouble(size_t sampling = 100, double epsabs = 1e-5);
+	virtual ~ANACalculatorSkewDouble();
 
 	virtual void setResolution(double fwhm_qx, double fwhm_qz);
 	virtual void setSample(ANASampleCub * );

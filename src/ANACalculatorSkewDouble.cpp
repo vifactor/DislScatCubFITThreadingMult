@@ -9,10 +9,10 @@
 
 double ana_coplanar_triple_integrand_xz1(double x, void *params)
 {
-	ANACalculatorCoplanarTriple * calculator;
+	ANACalculatorSkewDouble * calculator;
 	static double result;
 
-	calculator = static_cast<ANACalculatorCoplanarTriple *> (params);
+	calculator = static_cast<ANACalculatorSkewDouble *> (params);
 
 	result = exp(-calculator->m_coefficient * x * x - calculator->T_threading(x))
 			* cos(calculator->m_frequency * x);
@@ -20,7 +20,7 @@ double ana_coplanar_triple_integrand_xz1(double x, void *params)
 	return result;
 }
 
-ANACalculatorCoplanarTriple::ANACalculatorCoplanarTriple(size_t sampling, double epsabs)
+ANACalculatorSkewDouble::ANACalculatorSkewDouble(size_t sampling, double epsabs)
 {
 
 	m_sample = NULL;
@@ -60,7 +60,7 @@ ANACalculatorCoplanarTriple::ANACalculatorCoplanarTriple(size_t sampling, double
 	gsl_set_error_handler_off ();
 }
 
-ANACalculatorCoplanarTriple::~ANACalculatorCoplanarTriple()
+ANACalculatorSkewDouble::~ANACalculatorSkewDouble()
 {
 	delete[] m_z1;
 	delete[] m_integrand_values;
@@ -76,7 +76,7 @@ ANACalculatorCoplanarTriple::~ANACalculatorCoplanarTriple()
 		gsl_integration_workspace_free(m_cyclic_workspace);
 }
 
-void ANACalculatorCoplanarTriple::setSample(ANASampleCub * sample)
+void ANACalculatorSkewDouble::setSample(ANASampleCub * sample)
 {
     m_sample = sample;
     for(size_t i = 0; i < m_sampling - 1; ++i)
@@ -88,7 +88,7 @@ void ANACalculatorCoplanarTriple::setSample(ANASampleCub * sample)
     m_z1[m_sampling - 1] = m_sample->m_thickness * 0.999;
 }
 
-void ANACalculatorCoplanarTriple::setResolution(double fwhm_qx, double fwhm_qz)
+void ANACalculatorSkewDouble::setResolution(double fwhm_qx, double fwhm_qz)
 {
 	/* FWHM = 2 * sqrt(2 * log(2)) / sigma */
 	/* resol2 = 1 / (2 * sigma**2) */
@@ -96,7 +96,7 @@ void ANACalculatorCoplanarTriple::setResolution(double fwhm_qx, double fwhm_qz)
 	m_resol2_z = gsl_pow_2(fwhm_qz / 4) / log(2.0);
 }
 
-double ANACalculatorCoplanarTriple::T_threading(double x) const
+double ANACalculatorSkewDouble::T_threading(double x) const
 {
 	static double result;
 
@@ -106,7 +106,7 @@ double ANACalculatorCoplanarTriple::T_threading(double x) const
 }
 
 double
-ANACalculatorCoplanarTriple::I(const double qx, const double qz, double & err) const
+ANACalculatorSkewDouble::I(const double qx, const double qz, double & err) const
 {
 	static double result, abserr;
 
@@ -138,7 +138,7 @@ ANACalculatorCoplanarTriple::I(const double qx, const double qz, double & err) c
 	return result;
 }
 
-double ANACalculatorCoplanarTriple::I(const double qx, const double qz) const
+double ANACalculatorSkewDouble::I(const double qx, const double qz) const
 {
 	static double result, abserr;
 
@@ -147,7 +147,7 @@ double ANACalculatorCoplanarTriple::I(const double qx, const double qz) const
 	return result;
 }
 
-void ANACalculatorCoplanarTriple::prepare(double z1) const
+void ANACalculatorSkewDouble::prepare(double z1) const
 {
 	static double wxx, wxz, wzz;
 

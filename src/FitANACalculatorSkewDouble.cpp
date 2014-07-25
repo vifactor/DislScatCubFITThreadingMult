@@ -9,7 +9,7 @@
 using namespace boost;
 
 FitANACalculatorCoplanarTriple::FitANACalculatorCoplanarTriple(
-                    const std::vector<ANACalculatorCoplanarTriple *>& calculators)
+                    const std::vector<ANACalculatorSkewDouble *>& calculators)
 {
 	m_calculators = calculators;
 	m_scales.resize(m_calculators.size());

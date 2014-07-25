@@ -31,12 +31,12 @@ class FitANACalculatorCoplanarTriple:
 {
 public:
 	FitANACalculatorCoplanarTriple(
-	        const std::vector<ANACalculatorCoplanarTriple *>& calculators);
+	        const std::vector<ANACalculatorSkewDouble *>& calculators);
 	virtual ~FitANACalculatorCoplanarTriple() {}
 	virtual void reinit(const NonlinearFit::CalculatorParameterMap& params);
 	virtual double eval(const NonlinearFit::CalculatorArgument * arg);
 protected:
-	std::vector<ANACalculatorCoplanarTriple *> m_calculators;
+	std::vector<ANACalculatorSkewDouble *> m_calculators;
 	std::vector<double> m_scales, m_backgrounds;
 	std::vector<std::string> m_scale_names,
 	                         m_background_names,
