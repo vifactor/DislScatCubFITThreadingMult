@@ -86,7 +86,7 @@ void Engine::init()
 	m_fParametersFinal.clear();
 
 	m_exp_intens_vals.clear(); m_ini_intens_vals.clear(); m_fin_intens_vals.clear();
-	m_qx_vals.clear(); m_qz_vals.clear();
+	m_domega_vals.clear();
 
 	for(size_t i = 0; i < m_DataPoints.size(); ++i)
 	{
@@ -151,8 +151,7 @@ void Engine::saveFitData(size_t id) const
 	fout << "#qx\tqz\tIexp\tIini\tIfin" << std::endl;
 	for(size_t ipt = m_vals_sizes[id]; ipt < m_vals_sizes[id + 1]; ipt++)
 	{
-        fout << m_qx_vals[ipt] << "\t"
-            << m_qz_vals[ipt] << "\t"
+        fout << m_domega_vals[ipt] * 180.0 / M_PI  << "\t"
 			<< m_exp_intens_vals[ipt] << "\t"
 			<< m_ini_intens_vals[ipt] << "\t"
 			<< m_fin_intens_vals[ipt] << std::endl;
@@ -272,28 +271,23 @@ void Engine::readData(size_t id)
         throw Engine::Exception("Column \"[intensity]\" has not been found in " +
                             m_programSettings->getDataConfig(id).file.native());
     else if(!dr.columnExists("[qx]"))
-        throw Engine::Exception("Column \"[qx]\" has not been found in "+
-                            m_programSettings->getDataConfig(id).file.native());
-    else if(!dr.columnExists("[qz]"))
-        throw Engine::Exception("Column \"[qz]\" has not been found in "+
+        throw Engine::Exception("Column \"[domega]\" has not been found in "+
                             m_programSettings->getDataConfig(id).file.native());
     else
     {
         const DataReader::ColumnType& intensity = dr.columnGet("[intensity]");
-        const DataReader::ColumnType& qx= dr.columnGet("[qx]");
-        const DataReader::ColumnType& qz = dr.columnGet("[qz]");
-        m_exp_intens_vals.insert(m_exp_intens_vals.end(),
-                                intensity.begin(),
-                                intensity.end());
-        m_qx_vals.insert(m_qx_vals.end(), qx.begin(), qx.end());
-        m_qz_vals.insert(m_qz_vals.end(), qz.begin(), qz.end());
+        const DataReader::ColumnType& domega= dr.columnGet("[domega]");
         
         /*allocate arguments and residuals*/
         for(size_t i = 0; i < intensity.size(); ++i)
         {
+            m_exp_intens_vals.push_back(intensity[i]);
+            /*transform degrees to radians*/
+            m_domega_vals.push_back(domega[i] * M_PI / 180.0);
+        
             m_DataPoints.push_back(
                 NonlinearFit::DataPoint(
-                        new ANACalculatorSkewDoubleArgument(qx[i], id),
+                        new ANACalculatorSkewDoubleArgument(domega[i] * M_PI / 180.0, id),
                         intensity[i]));
         }
         

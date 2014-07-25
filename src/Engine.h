@@ -59,7 +59,7 @@ private:
 	/*vector of fit parameters with their final values*/
 	NonlinearFit::FitParameterList m_fParametersFinal;
 
-	std::vector<double> m_qx_vals, m_qz_vals;
+	std::vector<double> m_domega_vals;
 	std::vector<double> m_exp_intens_vals, m_ini_intens_vals, m_fin_intens_vals;
 	std::vector<size_t> m_vals_sizes;
 	NonlinearFit::DataPointList m_DataPoints;
