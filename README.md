@@ -23,25 +23,72 @@ From command line in the program folder type following:
 2. cd build/
 3. cmake ..
 4. make
-
-You find executable file **DislScatCubFITThreadingMult** in the *build* folder
-
 5. (optional) ln -s /home/user/folder-with-program/DislScatCubFITThreadingMult/build/DislScatHexFITThreadingMult /home/user/bin/DislScatCubFITThreadingMult
 
 You will be able then run your program from any location simply typing 
-DislScatCubFITThreadingMult in a terminal window
+DislScatCubFITThreadingMult in a terminal window.
 
 # Usage
-Suggested folder structure:
-sample/
-    +datafile_1
-    +datafile_2
-    ...
-    +datafile_n
-    +config/
-        +data.cfg
-        +fit.cfg
-        +sample.cfg
+Suggested folder structure:  
+.  
+├── config  
+│   ├── data.cfg  
+│   ├── fit.cfg  
+│   ├── sample.cfg  
+├── data1.dat  
+├── data2.dat  
+├── ...  
+├── datan.dat  
+
+Data files should mandatory contain (at least) two columns entitled in the header as follows:  
+    #   [omega]  [intensity]  
+or  
+    #   [domega]  [intensity]  
+if 0-point is in the peak center. [omega]-column values should be in degrees.
+
+Each added datafile should possess the following record in the data.cfg configuration file:
+    {  
+        file = "relative_path/data.dat";
+        Q = [ H, K, I, L ];
+        resolution : 
+        {
+            x = <double>;
+            z = <double>;
+        };
+        I0 = <double>;
+        Ibg = <double>;
+    }  
+Do not forget to add record 
+    {  
+		name = "Data.[<integer>].I0";
+		minVal = <double>;
+		maxVal = <double>;
+	}  
+to *fit.cfg* upon addition of a new datafile. 
+This will add a new intensity-scale fit variable. 
+Normally, you always want to fit intensity scale.
+
+To run the program type:
+
+DislScatCubFITThreadingMult config/
+
+Folder structure after run:  
+.
+├── config  
+│   ├── data.cfg  
+│   ├── data.~cfg  
+│   ├── fit.cfg  
+│   ├── resume.txt  
+│   ├── sample.cfg  
+│   ├── sample.~cfg  
+│   ├── data1.ft  
+│   ├── data2.ft  
+│   ├── ...  
+│   └── datan.ft  
+├── data1.dat
+├── data2.dat
+├── ...  
+└── datan.dat  
 
 ## Tested with
 Linux Mint 13:
