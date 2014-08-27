@@ -23,13 +23,15 @@ From command line in the program folder type following:
 2. cd build/
 3. cmake ..
 4. make
-5. (optional) ln -s /home/user/folder-with-program/DislScatCubFITThreadingMult/build/DislScatHexFITThreadingMult /home/user/bin/DislScatCubFITThreadingMult
+5. (optional) ln -s /home/user/folder-with-program/DislScatCubFITThreadingMult/build/DislScatCubFITThreadingMult /home/user/bin/DislScatCubFITThreadingMult
 
-You will be able then run your program from any location simply typing 
-DislScatCubFITThreadingMult in a terminal window.
+After 4-th step you may find *DislScatCubFITThreadingMult* in the *build/* directory.
+
+After 5-th step, you will be able then run your program from any location simply typing 
+*DislScatCubFITThreadingMult* in a terminal window.
 
 # Usage
-Suggested folder structure:  
+####Suggested folder structure:
 .  
 ├── config  
 │   ├── data.cfg  
@@ -46,33 +48,32 @@ or
     #   [domega]  [intensity]  
 if 0-point is in the peak center. [omega]-column values should be in degrees.
 
-Each added datafile should possess the following record in the data.cfg configuration file:
+Each added datafile should possess the following record in the *data.cfg* configuration file:  
     {  
-        file = "relative_path/data.dat";
-        Q = [ H, K, I, L ];
-        resolution : 
-        {
-            x = <double>;
-            z = <double>;
+        file = "relative_path/data.dat";  
+        Q = [ H, K, I, L ];  
+        resolution :  
+        {  
+            x = double_value;  
+            z = double_value;  
         };
-        I0 = <double>;
-        Ibg = <double>;
+        I0 = double_value;  
+        Ibg = double_value;  
     }  
-Do not forget to add record 
+Do not forget to add record  
     {  
-		name = "Data.[<integer>].I0";
-		minVal = <double>;
-		maxVal = <double>;
+		name = "Data.[index].I0";  
+		minVal = double_value;  
+		maxVal = double_value;  
 	}  
 to *fit.cfg* upon addition of a new datafile. 
 This will add a new intensity-scale fit variable. 
 Normally, you always want to fit intensity scale.
 
-To run the program type:
+####To run the program type:
+*DislScatCubFITThreadingMult* config/
 
-DislScatCubFITThreadingMult config/
-
-Folder structure after run:  
+####Folder structure after run:  
 .
 ├── config  
 │   ├── data.cfg  
@@ -85,15 +86,11 @@ Folder structure after run:
 │   ├── data2.ft  
 │   ├── ...  
 │   └── datan.ft  
-├── data1.dat
-├── data2.dat
+├── data1.dat  
+├── data2.dat  
 ├── ...  
 └── datan.dat  
 
-## Tested with
-Linux Mint 13:
-- cmake 2.8.7
-- GSL v1.15
-- BLAS v1.2
-- PORT v3
-- libconfig v1.4.9
+## Tested on
+Linux Mint 17
+Ubuntu 12.04, 14.04
