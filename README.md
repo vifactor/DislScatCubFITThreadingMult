@@ -26,6 +26,23 @@ From command line in the program folder type following:
 
 You find executable file **DislScatCubFITThreadingMult** in the *build* folder
 
+5. (optional) ln -s /home/user/folder-with-program/DislScatCubFITThreadingMult/build/DislScatHexFITThreadingMult /home/user/bin/DislScatCubFITThreadingMult
+
+You will be able then run your program from any location simply typing 
+DislScatCubFITThreadingMult in a terminal window
+
+# Usage
+Suggested folder structure:
+sample/
+    +datafile_1
+    +datafile_2
+    ...
+    +datafile_n
+    +config/
+        +data.cfg
+        +fit.cfg
+        +sample.cfg
+
 ## Tested with
 Linux Mint 13:
 - cmake 2.8.7
