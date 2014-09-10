@@ -2,6 +2,7 @@
  * ANACalculatorSkewDouble.cpp
  *
  *  Created on: 24 july 2014
+ *  Modified on: 10 sep 2014
  *      Author: kopp
  */
 
@@ -15,7 +16,8 @@ double ana_skew_double_integrand(double x, void *params)
 	calculator = static_cast<ANACalculatorSkewDouble *> (params);
 
 	result = exp(-calculator->T_threading(x))
-			* cos(calculator->m_frequency * x);
+			* cos(calculator->m_frequency * x)
+			* exp(-calculator->m_resol2 * x * x);//Gaussian resolution function
 
 	return result;
 }
@@ -31,8 +33,7 @@ ANACalculatorSkewDouble::ANACalculatorSkewDouble(double Qx, double Qz,
     
 	m_sample = NULL;
 
-	m_resol2_x = 0.0;
-	m_resol2_z = 0.0;
+	m_resol2 = 0.0;
 
 	m_frequency = 0.0;
 	
@@ -79,12 +80,11 @@ void ANACalculatorSkewDouble::setSample(ANASampleCub * sample)
     m_sample = sample;
 }
 
-void ANACalculatorSkewDouble::setResolution(double fwhm_qx, double fwhm_qz)
+void ANACalculatorSkewDouble::setResolution(double fwhm_q)
 {
 	/* FWHM = 2 * sqrt(2 * log(2)) / sigma */
 	/* resol2 = 1 / (2 * sigma**2) */
-	m_resol2_x = gsl_pow_2(fwhm_qx / 4) / log(2.0);
-	m_resol2_z = gsl_pow_2(fwhm_qz / 4) / log(2.0);
+	m_resol2 = gsl_pow_2(fwhm_q / 4) / log(2.0);
 }
 
 double ANACalculatorSkewDouble::T_threading(double x) const

@@ -23,7 +23,7 @@ public:
 	        );
 	virtual ~ANACalculatorSkewDouble();
 
-	virtual void setResolution(double fwhm_qx, double fwhm_qz);
+	virtual void setResolution(double fwhm_q);
 	virtual void setSample(ANASampleCub * );
 	ANASampleCub * getSample() {return m_sample;}
 	virtual double I(const double omega) const;
@@ -34,7 +34,7 @@ protected:
     ANASampleCub * m_sample;
 
     double m_alpha, m_angcoef;
-	double m_resol2_x, m_resol2_z;
+	double m_resol2;
 	mutable double m_frequency;
 
 	inline double T_threading(double x) const;

@@ -51,7 +51,7 @@ if 0-point is in the peak center. [omega]-column values should be in degrees.
 Each added datafile should possess the following record in the *data.cfg* configuration file:  
     {  
         file = "relative_path/data.dat";  
-        Q = [ H, K, I, L ];  
+        Q = [ H, K, L ];  
         resolution :  
         {  
             x = double_value;  

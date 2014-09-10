@@ -360,8 +360,7 @@ void Engine::setupCalculator(size_t id)
                 m_programSettings->getSampleConfig().width));
         
         m_calculators.back()->setResolution(
-				m_programSettings->getDataConfig(id).resolX,
-				m_programSettings->getDataConfig(id).resolZ);
+				m_programSettings->getDataConfig(id).resolution);
 
 		/*threading layers*/
         const std::vector<ProgramSettings::SampleConfig::ThreadingDislocationType>& 

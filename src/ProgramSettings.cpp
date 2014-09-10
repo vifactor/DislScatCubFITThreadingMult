@@ -26,8 +26,7 @@ ProgramSettings::DataConfig::set(const libconfig::Setting& data,
 		throw ProgramSettings::Exception(data["Q"].getPath());
 	}
     
-    resolX = data["resolution"]["x"];
-	resolZ = data["resolution"]["z"];
+    resolution = data["resolution"];
 	
 	I0 = data["I0"];
 	cmap[data["I0"].getPath()] = I0;
@@ -42,8 +41,7 @@ operator<<(std::ostream& out, const ProgramSettings::DataConfig &data)
 {
     out << "\tFile:\t" << data.file << std::endl;
 	out << "\tReflection:\t" << data.Q << std::endl;
-	out << "\tResolutions (dqx, dqz):\t" << data.resolX
-			<< "\t" << data.resolZ << std::endl;
+	out << "\tResolution:\t" << data.resolution << std::endl;
 	out << "\tScale:\t" << data.I0 << std::endl;
 	out << "\tBackground:\t" << data.Ibg << std::endl;
 	return out;

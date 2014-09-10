@@ -44,7 +44,7 @@ public:
 	struct DataConfig
 	{
         MillerReciprocalCubIndices Q;
-        double resolX, resolZ;
+        double resolution;
         boost::filesystem::path file;
         double Ibg, I0;
         
